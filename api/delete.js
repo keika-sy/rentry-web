@@ -1,21 +1,27 @@
 import fetch from 'node-fetch';
+import { withCors, methodNotAllowed } from './_utils.js';
 
 const BASE_URL = 'https://rentry.org';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return methodNotAllowed(res, ['POST', 'OPTIONS']);
+  }
+
+  const { url, edit_code } = req.body || {};
+
+  if (!url || !edit_code) {
+    return res.status(400).json({ error: 'Missing required fields: url, edit_code' });
   }
 
   try {
-    const { url, edit_code } = req.body;
-
-    if (!url || !edit_code) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
     // Get CSRF token
-    const csrfResponse = await fetch(`${BASE_URL}/`);
+    const csrfResponse = await fetch(`${BASE_URL}/`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    
     const cookies = csrfResponse.headers.get('set-cookie');
     const csrfMatch = cookies?.match(/csrftoken=([^;]+)/);
     const csrfToken = csrfMatch ? csrfMatch[1] : '';
@@ -25,36 +31,48 @@ export default async function handler(req, res) {
     formData.append('edit_code', edit_code);
     formData.append('delete', 'delete');
 
-    const response = await fetch(`${BASE_URL}/${url}/edit`, {
+    // Delete request
+    await fetch(`${BASE_URL}/${url}/edit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Referer': `${BASE_URL}/api/edit`,
-        'Cookie': `csrftoken=${csrfToken}`
+        'Cookie': `csrftoken=${csrfToken}`,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       },
       body: formData.toString(),
       redirect: 'manual'
     });
 
-    // Check if delete was successful by verifying the page is gone
+    // Verify deletion
     const checkResponse = await fetch(`${BASE_URL}/${url}/raw`, {
-      method: 'GET'
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
     });
 
     if (checkResponse.status === 404) {
-      res.status(200).json({ 
+      return res.status(200).json({ 
         status: 200, 
         content: 'OK',
         message: 'Paste deleted successfully'
       });
     } else {
-      res.status(400).json({ 
+      return res.status(400).json({ 
         status: 400,
-        content: 'Failed to delete paste',
+        content: 'Failed',
         error: 'Invalid edit code or paste not found'
       });
     }
+    
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Delete paste error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to delete paste', 
+      message: error.message 
+    });
   }
 }
+
+export default withCors(handler);

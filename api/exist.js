@@ -1,40 +1,50 @@
 import fetch from 'node-fetch';
+import { withCors, methodNotAllowed } from './_utils.js';
 
 const BASE_URL = 'https://rentry.org';
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return methodNotAllowed(res, ['GET', 'OPTIONS']);
+  }
+
+  const { url } = req.query || {};
+
+  if (!url) {
+    return res.status(400).json({ error: 'URL parameter is required' });
   }
 
   try {
-    const { url } = req.query;
-
-    if (!url) {
-      return res.status(400).json({ error: 'URL parameter required' });
-    }
-
     const response = await fetch(`${BASE_URL}/${url}/raw`, {
       method: 'GET',
       headers: {
-        'Referer': BASE_URL
+        'Referer': BASE_URL,
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
     });
 
     if (response.ok) {
-      res.status(200).json({ 
+      return res.status(200).json({ 
         exists: true, 
         url: url,
         status: response.status
       });
     } else {
-      res.status(404).json({ 
+      return res.status(404).json({ 
         exists: false, 
         url: url,
-        status: response.status
+        status: response.status,
+        error: 'Paste not found'
       });
     }
+    
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Check exist error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to check paste', 
+      message: error.message 
+    });
   }
 }
+
+export default withCors(handler);

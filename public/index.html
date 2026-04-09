@@ -53,20 +53,6 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
         }
-        .btn-primary::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: rotate(45deg);
-            transition: all 0.5s;
-        }
-        .btn-primary:hover::after {
-            left: 100%;
-        }
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -109,35 +95,18 @@
                 linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
             background-size: 50px 50px;
         }
-        .floating-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            overflow: hidden;
-        }
-        .shape {
-            position: absolute;
-            opacity: 0.03;
-            animation: float 20s infinite ease-in-out;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-100px) rotate(180deg); }
+        .debug-info {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
     </style>
 </head>
 <body class="text-gray-100 overflow-x-hidden">
-    <!-- Background Effects -->
     <div class="grid-bg"></div>
-    <div class="floating-shapes">
-        <div class="shape w-64 h-64 bg-indigo-500 rounded-full top-20 left-10 blur-3xl"></div>
-        <div class="shape w-96 h-96 bg-purple-500 rounded-full bottom-20 right-10 blur-3xl" style="animation-delay: -10s;"></div>
-    </div>
-
+    
     <div class="container mx-auto px-4 py-8 max-w-5xl relative z-10">
         <!-- Header -->
         <header class="text-center mb-12 animate-slide-in">
@@ -146,11 +115,11 @@
                 <span class="text-xs font-medium text-gray-400">API v1.0.0.5 • Connected to rentry.org</span>
             </div>
             <h1 class="text-6xl font-bold mb-4 gradient-text tracking-tight">Rentry Web</h1>
-            <p class="text-gray-400 text-lg max-w-2xl mx-auto">Modern web interface for rentry.org markdown paste service. Create, edit, and manage your pastes with ease.</p>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">Modern web interface for rentry.org markdown paste service.</p>
         </header>
 
         <!-- Main Interface -->
-        <div class="glass-panel rounded-2xl p-8 mb-8 neon-glow animate-slide-in" style="animation-delay: 0.1s;">
+        <div class="glass-panel rounded-2xl p-8 mb-8 neon-glow animate-slide-in">
             <!-- Tabs -->
             <div class="flex flex-wrap gap-2 mb-8 p-2 bg-black/40 rounded-xl backdrop-blur-sm">
                 <button onclick="switchTab('new')" id="tab-new" class="tab-active px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 text-sm">
@@ -179,30 +148,25 @@
             <div id="form-new" class="tab-content">
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
                     <div class="group">
-                        <label class="block text-sm font-medium text-gray-400 mb-2 group-focus-within:text-indigo-400 transition-colors">Custom URL <span class="text-gray-600 text-xs">(Optional)</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Custom URL <span class="text-gray-600 text-xs">(Optional)</span></label>
                         <div class="relative">
                             <span class="absolute left-4 top-3.5 text-gray-500 text-sm">rentry.org/</span>
                             <input type="text" id="new-url" placeholder="my-paste" class="input-field w-full pl-28 pr-4 py-3 rounded-lg text-white placeholder-gray-600 font-mono text-sm">
                         </div>
-                        <p class="text-xs text-gray-500 mt-1.5">2-100 chars, alphanumeric + underscore/hyphen. Leave empty for random.</p>
+                        <p class="text-xs text-gray-500 mt-1.5">2-100 chars, alphanumeric + underscore/hyphen</p>
                     </div>
                     <div class="group">
-                        <label class="block text-sm font-medium text-gray-400 mb-2 group-focus-within:text-indigo-400 transition-colors">Edit Code <span class="text-gray-600 text-xs">(Optional)</span></label>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Edit Code <span class="text-gray-600 text-xs">(Optional)</span></label>
                         <input type="text" id="new-edit-code" placeholder="secret-code-123" class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 font-mono text-sm">
-                        <p class="text-xs text-gray-500 mt-1.5">1-100 chars. Save this! You'll need it to edit/delete.</p>
+                        <p class="text-xs text-gray-500 mt-1.5">Save this! You'll need it to edit/delete</p>
                     </div>
                 </div>
                 <div class="mb-6 group">
                     <div class="flex justify-between items-center mb-2">
-                        <label class="block text-sm font-medium text-gray-400 group-focus-within:text-indigo-400 transition-colors">Content <span class="text-red-400">*</span></label>
+                        <label class="block text-sm font-medium text-gray-400">Content <span class="text-red-400">*</span></label>
                         <span id="char-count" class="text-xs text-gray-500 font-mono">0 / 200,000</span>
                     </div>
-                    <textarea id="new-content" rows="14" placeholder="# Your Markdown Content Here
-
-Write your markdown content...
-- Supports all markdown syntax
-- Headers, lists, code blocks, links
-- Max 200,000 characters" class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 font-mono text-sm resize-y leading-relaxed"></textarea>
+                    <textarea id="new-content" rows="14" placeholder="# Your Markdown Content Here..." class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-gray-600 font-mono text-sm resize-y leading-relaxed"></textarea>
                 </div>
                 <button onclick="createNew()" class="btn-primary w-full py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-3">
                     <span id="btn-new-text">Create New Paste</span>
@@ -253,7 +217,7 @@ Write your markdown content...
                 <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
                     <p class="text-red-400 text-sm flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        <span class="font-medium">Warning:</span> This action cannot be undone. The paste will be permanently deleted.
+                        Warning: This action cannot be undone!
                     </p>
                 </div>
                 <button onclick="deletePaste()" class="bg-red-600 hover:bg-red-700 w-full py-4 rounded-lg font-semibold text-lg transition-all flex items-center justify-center gap-3">
@@ -282,10 +246,6 @@ Write your markdown content...
                             <button onclick="copyToClipboard('raw-content')" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-indigo-400 transition-colors flex items-center gap-1.5">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                 Copy
-                            </button>
-                            <button onclick="downloadRaw()" class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-sm text-indigo-400 transition-colors flex items-center gap-1.5">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                Download
                             </button>
                         </div>
                     </div>
@@ -319,51 +279,102 @@ Write your markdown content...
                     <div class="flex-1 min-w-0">
                         <h3 id="result-title" class="text-lg font-semibold mb-2">Result</h3>
                         <div id="result-content" class="text-gray-300 font-mono text-sm whitespace-pre-wrap break-words"></div>
+                        <div id="result-debug" class="debug-info hidden"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Info Grid -->
-        <div class="grid md:grid-cols-3 gap-6 animate-slide-in" style="animation-delay: 0.2s;">
-            <div class="glass-panel rounded-xl p-6 hover:bg-white/5 transition-colors group">
-                <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <h3 class="font-semibold mb-2 text-white">Lightning Fast</h3>
-                <p class="text-sm text-gray-400 leading-relaxed">Create and manage pastes instantly with our optimized API proxy. No delays, no complications.</p>
-            </div>
-            <div class="glass-panel rounded-xl p-6 hover:bg-white/5 transition-colors group">
-                <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                </div>
-                <h3 class="font-semibold mb-2 text-white">Secure by Design</h3>
-                <p class="text-sm text-gray-400 leading-relaxed">Edit codes protect your pastes. Only you can modify or delete your content. We never store your codes.</p>
-            </div>
-            <div class="glass-panel rounded-xl p-6 hover:bg-white/5 transition-colors group">
-                <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </div>
-                <h3 class="font-semibold mb-2 text-white">Full Markdown</h3>
-                <p class="text-sm text-gray-400 leading-relaxed">Complete GitHub-flavored markdown support. Headers, tables, code blocks, math, and more.</p>
-            </div>
-        </div>
-
         <!-- Footer -->
-        <footer class="mt-12 text-center animate-slide-in" style="animation-delay: 0.3s;">
+        <footer class="mt-12 text-center animate-slide-in">
             <div class="inline-flex items-center gap-4 text-sm text-gray-500 bg-white/5 px-6 py-3 rounded-full border border-white/10">
                 <span>Deployed on <span class="text-white font-medium">Vercel</span></span>
                 <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
                 <span>API v1.0.0.5</span>
-                <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
-                <a href="https://github.com/agamsol/rentry" class="text-indigo-400 hover:text-indigo-300 transition-colors">Original CLI</a>
             </div>
-            <p class="mt-4 text-xs text-gray-600">Not affiliated with rentry.org official service</p>
         </footer>
     </div>
 
     <script>
-        // Tab Switching
+        // ==========================================
+        // HELPER: Safe Fetch dengan Error Handling
+        // ==========================================
+        
+        /**
+         * Fungsi fetch yang aman dengan error handling lengkap
+         * Menangani kasus:
+         * 1. Network error (tidak ada koneksi)
+         * 2. Server return HTML error (bukan JSON)
+         * 3. JSON parse error
+         * 4. HTTP error status (4xx, 5xx)
+         */
+        async function safeFetch(url, options = {}) {
+            try {
+                // Lakukan fetch
+                const response = await fetch(url, options);
+                
+                // Dapatkan content-type dari response
+                const contentType = response.headers.get('content-type') || '';
+                
+                // Ambil text response dulu (untuk debugging)
+                const responseText = await response.text();
+                
+                // Cek apakah response adalah JSON
+                if (contentType.includes('application/json')) {
+                    try {
+                        const data = JSON.parse(responseText);
+                        return {
+                            success: true,
+                            ok: response.ok,
+                            status: response.status,
+                            data: data,
+                            isJson: true
+                        };
+                    } catch (parseError) {
+                        // JSON parse error (seharusnya tidak terjadi jika content-type benar)
+                        return {
+                            success: false,
+                            ok: false,
+                            status: response.status,
+                            error: 'Invalid JSON response from server',
+                            details: responseText.substring(0, 200),
+                            isJson: false
+                        };
+                    }
+                } else {
+                    // Server mengembalikan HTML (error page)
+                    // Ini yang menyebabkan "Unexpected token 'A'" error
+                    return {
+                        success: false,
+                        ok: false,
+                        status: response.status,
+                        error: 'Server returned HTML instead of JSON',
+                        details: responseText.substring(0, 100) + '...',
+                        isJson: false,
+                        isHtmlError: true
+                    };
+                }
+                
+            } catch (networkError) {
+                // Network error (fetch gagal)
+                return {
+                    success: false,
+                    ok: false,
+                    status: 0,
+                    error: 'Network error - Cannot connect to server',
+                    message: networkError.message,
+                    isNetworkError: true
+                };
+            }
+        }
+
+        // ==========================================
+        // UI Functions
+        // ==========================================
+        
+        const API_BASE = '/api';
+        let currentRawContent = '';
+
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`form-${tab}`).classList.remove('hidden');
@@ -378,39 +389,12 @@ Write your markdown content...
             document.getElementById('result-area').classList.add('hidden');
         }
 
-        // Character counter
         document.getElementById('new-content')?.addEventListener('input', function() {
             const count = this.value.length;
             const counter = document.getElementById('char-count');
             counter.textContent = `${count.toLocaleString()} / 200,000`;
             counter.className = count > 200000 ? 'text-xs text-red-400 font-mono' : 'text-xs text-gray-500 font-mono';
         });
-
-        // API Base (relative for Vercel)
-        const API_BASE = '/api';
-
-        function showResult(title, content, isError = false) {
-            const resultArea = document.getElementById('result-area');
-            const resultBox = document.getElementById('result-box');
-            const resultTitle = document.getElementById('result-title');
-            const resultContent = document.getElementById('result-content');
-            const resultIcon = document.getElementById('result-icon');
-            
-            resultArea.classList.remove('hidden');
-            resultBox.className = `result-box rounded-xl p-6 mb-8 ${isError ? 'error-box' : 'success-box'}`;
-            resultTitle.textContent = title;
-            resultContent.textContent = content;
-            
-            if (isError) {
-                resultIcon.innerHTML = '<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-                resultIcon.className = 'flex-shrink-0 w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center';
-            } else {
-                resultIcon.innerHTML = '<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                resultIcon.className = 'flex-shrink-0 w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center';
-            }
-            
-            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
 
         function setLoading(btnId, loadingId, isLoading) {
             const btnText = document.getElementById(btnId);
@@ -424,22 +408,54 @@ Write your markdown content...
             }
         }
 
-        // Create New Paste
+        function showResult(title, content, isError = false, debugInfo = '') {
+            const resultArea = document.getElementById('result-area');
+            const resultBox = document.getElementById('result-box');
+            const resultTitle = document.getElementById('result-title');
+            const resultContent = document.getElementById('result-content');
+            const resultIcon = document.getElementById('result-icon');
+            const resultDebug = document.getElementById('result-debug');
+            
+            resultArea.classList.remove('hidden');
+            resultBox.className = `result-box rounded-xl p-6 mb-8 ${isError ? 'error-box' : 'success-box'}`;
+            resultTitle.textContent = title;
+            resultContent.textContent = content;
+            
+            // Tampilkan debug info jika ada
+            if (debugInfo) {
+                resultDebug.textContent = `Debug: ${debugInfo}`;
+                resultDebug.classList.remove('hidden');
+            } else {
+                resultDebug.classList.add('hidden');
+            }
+            
+            if (isError) {
+                resultIcon.innerHTML = '<svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                resultIcon.className = 'flex-shrink-0 w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center';
+            } else {
+                resultIcon.innerHTML = '<svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                resultIcon.className = 'flex-shrink-0 w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center';
+            }
+            
+            resultArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ==========================================
+        // API Functions dengan Safe Fetch
+        // ==========================================
+
         async function createNew() {
             const url = document.getElementById('new-url').value.trim();
             const editCode = document.getElementById('new-edit-code').value.trim();
             const content = document.getElementById('new-content').value;
 
+            // Validation
             if (!content) {
                 showResult('Validation Error', 'Content is required!', true);
                 return;
             }
             if (content.length > 200000) {
                 showResult('Validation Error', 'Content exceeds 200,000 character limit!', true);
-                return;
-            }
-            if (url && (url.length < 2 || url.length > 100)) {
-                showResult('Validation Error', 'URL must be 2-100 characters!', true);
                 return;
             }
             if (url && !/^[a-zA-Z0-9_-]+$/.test(url)) {
@@ -449,38 +465,57 @@ Write your markdown content...
 
             setLoading('btn-new-text', 'btn-new-loading', true);
 
-            try {
-                const response = await fetch(`${API_BASE}/new`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text: content, url: url || undefined, edit_code: editCode || undefined })
-                });
+            // Gunakan safeFetch alih-alih fetch biasa
+            const result = await safeFetch(`${API_BASE}/new`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    text: content, 
+                    url: url || undefined, 
+                    edit_code: editCode || undefined 
+                })
+            });
 
-                const data = await response.json();
+            setLoading('btn-new-text', 'btn-new-loading', false);
 
-                if (response.ok && (data.status === '200' || data.content === 'OK')) {
-                    showResult('✅ Paste Created Successfully!', 
-                        `URL: https://${data.url}\n` +
-                        `Edit Code: ${data.edit_code}\n\n` +
-                        `⚠️  Save your edit code! You'll need it to edit or delete this paste.`
-                    );
-                    
-                    document.getElementById('new-url').value = '';
-                    document.getElementById('new-edit-code').value = '';
-                    document.getElementById('new-content').value = '';
-                    document.getElementById('char-count').textContent = '0 / 200,000';
-                } else {
-                    const errorMsg = data.errors ? Object.values(data.errors).join('\n') : (data.content || 'Unknown error');
-                    showResult('❌ Failed to Create', errorMsg, true);
-                }
-            } catch (error) {
-                showResult('❌ Network Error', error.message, true);
-            } finally {
-                setLoading('btn-new-text', 'btn-new-loading', false);
+            // Handle hasil
+            if (!result.success) {
+                // Error dari safeFetch (network error atau HTML response)
+                showResult(
+                    '❌ Server Error', 
+                    `${result.error}\n\n${result.message || result.details || ''}`,
+                    true,
+                    `Status: ${result.status}, Type: ${result.isHtmlError ? 'HTML Error Page' : 'Network Error'}`
+                );
+                return;
+            }
+
+            if (!result.ok) {
+                // HTTP error tapi response JSON valid
+                const errorMsg = result.data?.error || result.data?.content || `HTTP ${result.status}`;
+                showResult('❌ Failed to Create', errorMsg, true);
+                return;
+            }
+
+            // Success
+            const data = result.data;
+            if (data.status === '200' || data.content === 'OK') {
+                showResult(
+                    '✅ Paste Created Successfully!', 
+                    `URL: https://${data.url}\nEdit Code: ${data.edit_code}\n\n⚠️ Save your edit code!`
+                );
+                
+                // Clear form
+                document.getElementById('new-url').value = '';
+                document.getElementById('new-edit-code').value = '';
+                document.getElementById('new-content').value = '';
+                document.getElementById('char-count').textContent = '0 / 200,000';
+            } else {
+                const errorMsg = data.errors ? Object.values(data.errors).join('\n') : (data.content || 'Unknown error');
+                showResult('❌ Failed', errorMsg, true);
             }
         }
 
-        // Edit Paste
         async function editPaste() {
             const url = document.getElementById('edit-url').value.trim();
             const editCode = document.getElementById('edit-code').value.trim();
@@ -493,29 +528,32 @@ Write your markdown content...
 
             setLoading('btn-edit-text', 'btn-edit-loading', true);
 
-            try {
-                const response = await fetch(`${API_BASE}/edit`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url, edit_code: editCode, text: content })
-                });
+            const result = await safeFetch(`${API_BASE}/edit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, edit_code: editCode, text: content })
+            });
 
-                const data = await response.json();
+            setLoading('btn-edit-text', 'btn-edit-loading', false);
 
-                if (response.ok && (data.status === 200 || data.status === '200' || data.content === 'OK')) {
-                    showResult('✅ Paste Updated!', `Paste '${url}' has been updated successfully!`);
-                } else {
-                    const errorMsg = data.errors ? Object.values(data.errors).join('\n') : (data.content || 'Invalid edit code or paste not found');
-                    showResult('❌ Update Failed', errorMsg, true);
-                }
-            } catch (error) {
-                showResult('❌ Network Error', error.message, true);
-            } finally {
-                setLoading('btn-edit-text', 'btn-edit-loading', false);
+            if (!result.success) {
+                showResult('❌ Server Error', result.error, true, result.details);
+                return;
+            }
+
+            if (!result.ok) {
+                showResult('❌ Update Failed', result.data?.error || 'Invalid edit code', true);
+                return;
+            }
+
+            const data = result.data;
+            if (data.status === 200 || data.status === '200' || data.content === 'OK') {
+                showResult('✅ Paste Updated!', `Paste '${url}' has been updated successfully!`);
+            } else {
+                showResult('❌ Update Failed', data.content || 'Unknown error', true);
             }
         }
 
-        // Delete Paste
         async function deletePaste() {
             const url = document.getElementById('delete-url').value.trim();
             const editCode = document.getElementById('delete-code').value.trim();
@@ -527,30 +565,34 @@ Write your markdown content...
 
             setLoading('btn-delete-text', 'btn-delete-loading', true);
 
-            try {
-                const response = await fetch(`${API_BASE}/delete`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url, edit_code: editCode })
-                });
+            const result = await safeFetch(`${API_BASE}/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url, edit_code: editCode })
+            });
 
-                const data = await response.json();
+            setLoading('btn-delete-text', 'btn-delete-loading', false);
 
-                if (response.ok && (data.status === 200 || data.content === 'OK')) {
-                    showResult('✅ Paste Deleted', `Paste '${url}' has been permanently deleted.`);
-                    document.getElementById('delete-url').value = '';
-                    document.getElementById('delete-code').value = '';
-                } else {
-                    showResult('❌ Delete Failed', data.error || data.content || 'Invalid edit code or paste not found', true);
-                }
-            } catch (error) {
-                showResult('❌ Network Error', error.message, true);
-            } finally {
-                setLoading('btn-delete-text', 'btn-delete-loading', false);
+            if (!result.success) {
+                showResult('❌ Server Error', result.error, true, result.details);
+                return;
+            }
+
+            if (!result.ok) {
+                showResult('❌ Delete Failed', result.data?.error || 'Invalid edit code', true);
+                return;
+            }
+
+            const data = result.data;
+            if (data.status === 200 || data.content === 'OK') {
+                showResult('✅ Paste Deleted', `Paste '${url}' has been permanently deleted.`);
+                document.getElementById('delete-url').value = '';
+                document.getElementById('delete-code').value = '';
+            } else {
+                showResult('❌ Delete Failed', data.error || data.content || 'Unknown error', true);
             }
         }
 
-        // View Raw
         async function viewRaw() {
             const url = document.getElementById('raw-url').value.trim();
 
@@ -561,26 +603,33 @@ Write your markdown content...
 
             setLoading('btn-raw-text', 'btn-raw-loading', true);
 
-            try {
-                const response = await fetch(`${API_BASE}/raw?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
+            const result = await safeFetch(`${API_BASE}/raw?url=${encodeURIComponent(url)}`);
 
-                if (response.ok && data.content) {
-                    document.getElementById('raw-result').classList.remove('hidden');
-                    document.getElementById('raw-content').textContent = data.content;
-                    showResult('✅ Raw Content Retrieved', `Successfully fetched content for '${url}'\nLength: ${data.content.length.toLocaleString()} characters`);
-                } else {
-                    showResult('❌ Not Found', data.error || 'Paste not found or access denied.', true);
-                    document.getElementById('raw-result').classList.add('hidden');
-                }
-            } catch (error) {
-                showResult('❌ Network Error', error.message, true);
-            } finally {
-                setLoading('btn-raw-text', 'btn-raw-loading', false);
+            setLoading('btn-raw-text', 'btn-raw-loading', false);
+
+            if (!result.success) {
+                showResult('❌ Server Error', result.error, true, result.details);
+                document.getElementById('raw-result').classList.add('hidden');
+                return;
+            }
+
+            if (!result.ok) {
+                showResult('❌ Not Found', result.data?.error || 'Paste not found', true);
+                document.getElementById('raw-result').classList.add('hidden');
+                return;
+            }
+
+            const data = result.data;
+            if (data.content) {
+                currentRawContent = data.content;
+                document.getElementById('raw-result').classList.remove('hidden');
+                document.getElementById('raw-content').textContent = data.content;
+                showResult('✅ Raw Content Retrieved', `Content length: ${data.content.length.toLocaleString()} chars`);
+            } else {
+                showResult('❌ No Content', 'Paste exists but has no content', true);
             }
         }
 
-        // Check Exists
         async function checkExist() {
             const url = document.getElementById('exist-url').value.trim();
 
@@ -591,23 +640,22 @@ Write your markdown content...
 
             setLoading('btn-exist-text', 'btn-exist-loading', true);
 
-            try {
-                const response = await fetch(`${API_BASE}/exist?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
+            const result = await safeFetch(`${API_BASE}/exist?url=${encodeURIComponent(url)}`);
 
-                if (response.ok && data.exists) {
-                    showResult('✅ Paste Exists', `Paste 'rentry.org/${url}' exists and is accessible.`);
-                } else {
-                    showResult('❌ Not Found', `Paste 'rentry.org/${url}' does not exist.`, true);
-                }
-            } catch (error) {
-                showResult('❌ Network Error', error.message, true);
-            } finally {
-                setLoading('btn-exist-text', 'btn-exist-loading', false);
+            setLoading('btn-exist-text', 'btn-exist-loading', false);
+
+            if (!result.success) {
+                showResult('❌ Server Error', result.error, true, result.details);
+                return;
+            }
+
+            if (result.ok && result.data.exists) {
+                showResult('✅ Paste Exists', `Paste 'rentry.org/${url}' exists!`);
+            } else {
+                showResult('❌ Not Found', `Paste 'rentry.org/${url}' does not exist.`, true);
             }
         }
 
-        // Copy to clipboard
         async function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             const text = element.textContent;
@@ -620,9 +668,8 @@ Write your markdown content...
             }
         }
 
-        // Download raw content
         function downloadRaw() {
-            const content = document.getElementById('raw-content').textContent;
+            const content = currentRawContent;
             const url = document.getElementById('raw-url').value.trim();
             const blob = new Blob([content], { type: 'text/markdown' });
             const a = document.createElement('a');
